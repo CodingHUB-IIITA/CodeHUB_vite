@@ -1,22 +1,29 @@
-'use client'
+
 import React from 'react';
 import { useFormik } from 'formik';
 import { signin } from '../Api/auth.jsx';
-import "../App.css";
-
+import "../styles/global.css"
+import { useNavigate } from 'react-router-dom';
 
 export default function SigninForm() {
-  
+  const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
     },
-    onSubmit: values => {
+    onSubmit: async(values) => {
         console.log(values);
-      signin(values);
+        try{
+
+          await signin(values);
+          navigate('/dashboard');
+        }
+        catch(err){
+           console.error("Error 404",err);
+        }
     },
-    
+
   });
 
   return (

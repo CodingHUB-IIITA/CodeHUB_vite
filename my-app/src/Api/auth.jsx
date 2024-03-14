@@ -40,16 +40,17 @@ const registerUser = async (values ) => {
 };
 
 const signin = async (values) => {
-    const {state, setState} = userData();
-    const {email, password} = values;
-    const auth = await getAuth(app);
-    signInWithEmailAndPassword(auth,email,password).then((userCredential)=>{
+    const { email, password } = values;
+    const auth = getAuth(app);
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log(user);
-    }).catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
+        console.log("User signed in successfully:", user);
+        // Perform any additional actions after successful sign-in
+    } catch (error) {
+        console.error("Error signing in:", error.code, error.message);
+        // Handle sign-in error appropriately
+    }
 }
 
 

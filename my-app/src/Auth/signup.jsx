@@ -1,10 +1,11 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import { registerUser } from '../Api/auth.jsx';
-import "../App.css";
+import "../styles/global.css";
+import { useNavigate } from 'react-router-dom';
 
 export default function SignupForm() {
-  
+  const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -12,9 +13,17 @@ export default function SignupForm() {
       name: '',
       picture: null, 
     },
-    onSubmit: values => {
+    onSubmit: async(values) => {
+
       console.log(values);
-      registerUser(values);
+      try{
+        console.log("Signed Up successfully");
+        registerUser(values);
+        navigate('/dashboard');
+      }
+      catch{
+        console.error("Error");
+      }
     },
   });
 

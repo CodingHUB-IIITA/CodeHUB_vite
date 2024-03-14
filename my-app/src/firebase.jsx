@@ -13,7 +13,6 @@ const firebaseConfig = {
   databaseURL: "https://codehub-403113-default-rtdb.firebaseio.com"
   
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export default app;
