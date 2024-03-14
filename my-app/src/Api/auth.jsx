@@ -1,10 +1,10 @@
 //imports
 import { collection, doc, setDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
-import app from "../app/firebase.js";
+import app from "../firebase.jsx"
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import userData from "../context/auth.js"
-// db
+// import userData from "../context/auth.jsx"
+
 const db = getFirestore(app);
 const usersCollection = collection(db, "Users"); 
 
