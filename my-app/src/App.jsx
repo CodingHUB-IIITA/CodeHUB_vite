@@ -5,6 +5,7 @@ import SignupForm from "./Auth/signup";
 import Dashboard from "./pages/Dashboard";
 import UserDataProvider from "./Context/user.jsx";
 import { useUserData } from "./Context/user.jsx";
+import "./App.css"
 const App = () => {
   const {state, setState} = useUserData();
   console.log(state);
@@ -13,7 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<SignupForm />} />
         <Route path="/signin" element={<SigninForm />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Dashboard />} />
       </Routes>
     </Router>
   );
