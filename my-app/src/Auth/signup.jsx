@@ -1,10 +1,12 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import { registerUser } from '../Api/auth.jsx';
-import "../styles/global.css";
 import { useNavigate } from 'react-router-dom';
+import { useUserData } from '../Context/user.jsx';
 
 export default function SignupForm() {
+
+  const {state, setState} = useUserData();
   const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -17,8 +19,13 @@ export default function SignupForm() {
 
       console.log(values);
       try{
-        console.log("Signed Up successfully");
         registerUser(values);
+        setState((prevState) => ({
+          ...prevState,
+          name: values.name,
+          email: values.email,
+          picture: values.pic,
+        }))
         navigate('/dashboard');
       }
       catch{
@@ -30,7 +37,7 @@ export default function SignupForm() {
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-reqLblue">
       <p className="text-white text-2xl font-semibold mb-4 ">Sign Up</p>
-      <form onSubmit= {formik.handleSubmit} className="w-40 sm:w-1/2 bg-reqDblue p-8 rounded-lg">
+      <form onSubmit={formik.handleSubmit} className="w-40 sm:w-1/2 bg-reqDblue p-8 rounded-lg">
         <div className="mb-4">
           <label htmlFor="name" className="block text-white">Name</label>
           <input
@@ -65,7 +72,7 @@ export default function SignupForm() {
             value={formik.values.password}
             className="w-full bg-white rounded-md p-2"
           />
-        </div>
+        </div> 
         
         <button type="submit" className="bg-reqLblue text-white px-4 py-2 rounded-md font-semibold">Submit</button>
       </form>
