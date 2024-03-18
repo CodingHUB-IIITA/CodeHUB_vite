@@ -19,6 +19,7 @@ export default function SignupForm() {
 
       console.log(values);
       try{
+
         registerUser(values);
         setState((prevState) => ({
           ...prevState,

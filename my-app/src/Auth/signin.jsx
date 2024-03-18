@@ -20,7 +20,7 @@ export default function SigninForm() {
           navigate('/dashboard');
         }
         catch(err){
-           console.error("Error 404",err);
+           console.log(err)
         }
     },
 
