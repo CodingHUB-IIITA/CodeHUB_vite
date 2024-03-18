@@ -1,30 +1,44 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import { signin } from '../Api/auth.jsx';
 import "../styles/global.css"
 import { useNavigate } from 'react-router-dom';
-
+import { useUserData } from '../Context/user.jsx';
 export default function SigninForm() {
+  const {setState}=useUserData();
   const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
+      
     },
     onSubmit: async(values) => {
         console.log(values);
         try{
 
-          await signin(values);
-          navigate('/dashboard');
+          await signin(values).then((querySnapshot)=>{
+            console.log(querySnapshot);
+            console.log(typeof(querySnapshot.docs()));
+            
+
+          });
+         
+          navigate('/');    
         }
         catch(err){
-           console.log(err)
+           console.error(err);
         }
     },
 
   });
+//   useEffect(()=>{
+//     if(userData!=null){
+// navigate('/');
+//     }
+
+//   },[userData,navigate]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-reqLblue">

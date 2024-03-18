@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import { registerUser } from '../Api/auth.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../Context/user.jsx';
+import { getAuth } from 'firebase/auth';
 
 export default function SignupForm() {
 
@@ -13,13 +14,11 @@ export default function SignupForm() {
       email: '',
       password: '',
       name: '',
-      picture: null, 
+      picture: null,
     },
     onSubmit: async(values) => {
-
       console.log(values);
       try{
-
         registerUser(values);
         setState((prevState) => ({
           ...prevState,
@@ -27,14 +26,32 @@ export default function SignupForm() {
           email: values.email,
           picture: values.pic,
         }))
-        navigate('/dashboard');
+        navigate('/');
       }
       catch{
         console.error("Error");
       }
     },
   });
+  // useEffect(()=>{
+  //   const auth=getAuth();
+  //   const user=auth.currentUser;
+  //   if(user){
+  //     console.log("User is logged in:",user.uid);
+  //     getAuth()
+  //     .getUser(user.uid)
+  //     .then((userData)=>{
+  //       console.log("User data:",userData.stringify.JSON());
+  //     })
+  //     .catch((err)=>{
+  //       console.log(err);
+  //     })
 
+  //   }
+  //   else{
+  //     console.log("No user has signed Up");
+  //   }
+  // },[]);
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-reqLblue">
       <p className="text-white text-2xl font-semibold mb-4 ">Sign Up</p>
