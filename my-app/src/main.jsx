@@ -7,6 +7,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <UserDataProvider>
      <App />
   </UserDataProvider>
-   
- 
 )

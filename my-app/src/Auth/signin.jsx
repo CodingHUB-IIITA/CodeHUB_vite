@@ -5,8 +5,9 @@ import { signin } from '../Api/auth.jsx';
 import "../styles/global.css"
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../Context/user.jsx';
+
 export default function SigninForm() {
-  const {setState}=useUserData();
+  const {state,setState}=useUserData();
   const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -15,17 +16,20 @@ export default function SigninForm() {
       
     },
     onSubmit: async(values) => {
-        console.log(values);
         try{
-
-          await signin(values).then((querySnapshot)=>{
-            console.log(querySnapshot);
-            console.log(typeof(querySnapshot.docs()));
-            
-
+          await signin(values).then((querySnapshot) =>{
+            querySnapshot.forEach(element => {
+              const {name,role,email,handles,pic} = element.data();
+              setState((prevState) => ({...prevState, 
+                name: name,
+                role: role,
+                email: email,
+                handles: handles,
+                pic: pic 
+              }))
+              navigate('/');
+            });
           });
-         
-          navigate('/');    
         }
         catch(err){
            console.error(err);

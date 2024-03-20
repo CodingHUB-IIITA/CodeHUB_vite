@@ -26,32 +26,14 @@ export default function SignupForm() {
           email: values.email,
           picture: values.pic,
         }))
-        navigate('/');
+        navigate('/dashboard');
       }
       catch{
         console.error("Error");
       }
     },
   });
-  // useEffect(()=>{
-  //   const auth=getAuth();
-  //   const user=auth.currentUser;
-  //   if(user){
-  //     console.log("User is logged in:",user.uid);
-  //     getAuth()
-  //     .getUser(user.uid)
-  //     .then((userData)=>{
-  //       console.log("User data:",userData.stringify.JSON());
-  //     })
-  //     .catch((err)=>{
-  //       console.log(err);
-  //     })
 
-  //   }
-  //   else{
-  //     console.log("No user has signed Up");
-  //   }
-  // },[]);
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-reqLblue">
       <p className="text-white text-2xl font-semibold mb-4 ">Sign Up</p>

@@ -1,15 +1,18 @@
 
 import React from 'react';
 import "../styles/blogs.css"
-import BlogUpload from '../Components/BlogUpload';
+// import BlogsUploadPage from '../Components/BlogUpload';
+import BlogUploader from '../Components/BlogUpload';
 import BlogList from '../Components/BlogLists';
-function BlogsList() {
+import AllBlogs from './AllBlogs';
+const Blogs=()=> {
   return (
-    <div >
-   <BlogUpload/> 
-  <BlogList/> 
+    <div>
+
+      <div><BlogUploader/></div>
+      <div><AllBlogs/></div>
     </div>
   );
 }
 
-export default BlogsList;
+export default Blogs;

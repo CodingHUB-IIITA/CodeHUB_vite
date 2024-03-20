@@ -1,108 +1,127 @@
-import React, { useState, useEffect } from "react";
-import { firestore, storage } from "../firebase";
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getAuth } from "firebase/auth";
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, IconButton, Typography } from '@mui/material';
+import { AddPhotoAlternateOutlined as AddPhotoAlternateIcon, SendOutlined as SendIcon } from '@mui/icons-material';
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { firestore, storage } from '../firebase'; // Assuming you have Firebase initialized as 'db' and 'storage'
 
-const BlogsUploadPage = () => {
+const BlogUploader = () => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [tags, setTags] = useState('');
+  const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const blogsCollectionRef = collection(firestore, 'blogs');
+const storageRef = ref(storage, 'images');
+  
+  useEffect(() => {
     const auth = getAuth();
-    const user = auth.currentUser;
-    const blogsCollectionRef = collection(firestore, 'blogs');
-    const storageRef = ref(storage, 'images');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
 
-    const [title, setTitle] = useState("");
-    const [body, setBody] = useState("");
-    const [image, setImage] = useState(null);
-    const [userName, setUserName] = useState(""); 
-    console.log(user);
-    useEffect(() => {
-        const fetchUserName = async () => {
-            try {
-                if (user) {
-                    const userDoc = await getDoc(doc(firestore, "Users", user.uid)); 
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        setUserName(userData.name); 
-                    } else {
-                        console.log("User document does not exist");
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
+    return () => unsubscribe();
+  }, []);
 
-        fetchUserName(); 
-    }, [user]); 
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
 
-    const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-        setImage(file);
-    };
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    // Upload image to Firebase Storage
+    try{
 
-    const submit = async (e) => {
-        e.preventDefault();
-        try {
-            let imageUrl = '';
-            if (image) {
-                const imageRef = ref(storageRef, image.name);
-                await uploadBytes(imageRef, image);
-                imageUrl = await getDownloadURL(imageRef);
-            }
-
-            const blogData = {
-                title: title,
-                body: body,
-                author: userName, // Use the user's name instead of UID
-                imageUrl: imageUrl,
-                likes: 0,
-                comments: [],
-                createdAt: new Date()
-            };
-
-            await addDoc(blogsCollectionRef, blogData);
-
-            alert("Data successfully submitted");
-            setTitle("");
-            setBody("");
-            setImage(null);
-
-        } catch (error) {
-            console.error("Error:", error);
+        if (image) {
+        let imageUrl = '';
+        if (image) {
+            const imageRef = ref(storageRef, image.name);
+            await uploadBytes(imageRef, image);
+            imageUrl = await getDownloadURL(imageRef);
         }
-    };
+        }
+    
+        // Add blog post to Firestore
+        const blogData = {
+          title:title,
+          content:content,
+          tags: tags.split(','), // Assuming tags are comma-separated
+          author: currentUser.displayName,
+          createdAt: new Date(),
+          imageUrl:imageUrl,
+          likes: 0,
+          comments: [],
+        };
+    
+        await addDoc(blogsCollectionRef, blogData);
+    
+        // Clear form fields
+        setTitle('');
+        setContent('');
+        setTags('');
+        setImage(null);
+        setImageUrl('');
+      }
+      catch(err){
+       console.log("error in uploading Blog, Try Again...");
+      }
+    }
 
-    return (
-        <div className="max-w-screen-lg mx-auto mt-8">
-            <h1 className="text-3xl font-bold mb-4">Blog Upload</h1>
-            <form onSubmit={submit} className="mb-8">
-                <input
-                    type="text"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                    className="w-full mb-4 p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                />
-                <textarea
-                    name="content"
-                    placeholder="Write your content here"
-                    rows="5"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    required
-                    className="w-full mb-4 p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                />
-                <input
-                    type="file"
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className="mb-4"
-                />
-                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Submit</button>
-            </form>
-        </div>
-    );
-}
+  return (
+    <div>
+      <Typography variant="h4" gutterBottom>
+        Upload a New Blog
+      </Typography>
+      <TextField
+        label="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Content"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        fullWidth
+        multiline
+        rows={4}
+        margin="normal"
+      />
+      <TextField
+        label="Tags (comma-separated)"
+        value={tags}
+        onChange={(e) => setTags(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+      <input
+        type="file"
+        accept="image/*"
+        id="image-upload"
+        onChange={handleImageChange}
+        style={{ display: 'none' }}
+      />
+      <label htmlFor="image-upload">
+        <IconButton component="span">
+          <AddPhotoAlternateIcon />
+        </IconButton>
+        Upload Image
+      </label>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<SendIcon />}
+        onClick={handleUpload}
+      >
+        Upload Blog
+      </Button>
+    </div>
+  );
+};
 
-export default BlogsUploadPage;
+export default BlogUploader;

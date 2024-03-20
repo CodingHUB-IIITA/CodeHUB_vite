@@ -3,11 +3,13 @@ import { collection, doc, getDocs, setDoc ,query,where} from "firebase/firestore
 import { getDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import app from "../firebase.jsx"
+import { signOut } from "firebase/auth";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const db = getFirestore();
-const usersCollection = collection(db, "Users"); 
+const usersCollection = collection(db, 'Users'); 
 
-//Create User 
 const registerUser = async (values) => {
    const auth = getAuth();
     
@@ -19,20 +21,17 @@ const registerUser = async (values) => {
         if (user) {
             localStorage.setItem('user', JSON.stringify(user));
             const token = await user.getIdToken();
-            console.log(token);
             localStorage.setItem('token', token);
             const userData = {
                 uid: user.uid,
-                name: user.displayName,
-                email: user.email,
+                name: name,
+                email: email,
                 pic: pic || 'default-pic-url',
                 handles: handles || [],
                 role: role || 0
             };
          
             await setDoc(doc(usersCollection, name), userData);
-
-            console.log("User registered Successfully",userData);
         } else {
             console.error("Error registering user: User object is undefined");
             console.log("Failed to register user");
@@ -45,7 +44,7 @@ const registerUser = async (values) => {
 
 
 const signin = async (values) => {
-   // const {setUserData}=useUserData();
+   
     const { email, password } = values;
     const auth = getAuth();
     try {
@@ -58,8 +57,6 @@ const signin = async (values) => {
             const q = query(usersCollection, where("uid", "==", user.uid));
 
             const querySnapshot = await getDocs(q);
-            // console.log(querySnapshot);
-            
             
             localStorage.setItem('token',token);
             return querySnapshot;
@@ -71,25 +68,21 @@ const signin = async (values) => {
         // Handle sign-in error appropriately
     }
 }
-
-const getUserProfile=async(uid)=>{
-    try{
-        const docRef=doc(usersCollection,uid);
-        const userDocSnap=await getDoc(docRef);
-        if(userDocSnap.exists()){
-            console.log(userDocSnap.data());
-           return userDocSnap.data();
+   
+    const signout = async () => {
+      
+        try {
+          const auth = getAuth();
+          await signOut(auth);
+          console.log("User Signed Out..");
+          
+          // Navigate to the sign-in page
+        //   navigate('/signin');
+        } catch (err) {
+          console.error("Error signing off", err);
         }
-
-        else{
-            console.error("No profile found");
-        }
-
-    }
-    catch(err){
-        console.log("Error in fetching profile",err);
-    }
-}
+      }
 
 
-export  { registerUser, signin, getUserProfile};
+
+export  { registerUser, signin,signout};
