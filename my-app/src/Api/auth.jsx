@@ -5,8 +5,7 @@ import { getFirestore } from "firebase/firestore";
 import app from "../firebase.jsx"
 import { signOut } from "firebase/auth";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 const db = getFirestore();
 const usersCollection = collection(db, 'Users'); 
 
@@ -15,6 +14,7 @@ const registerUser = async (values) => {
     
     const { name, email, password, pic, handles, role } = values;
     try {
+        
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log(user);
@@ -26,15 +26,17 @@ const registerUser = async (values) => {
                 uid: user.uid,
                 name: name,
                 email: email,
-                pic: pic || 'default-pic-url',
+                pic: pic || 'dhttps://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
                 handles: handles || [],
                 role: role || 0
             };
-         
+            
             await setDoc(doc(usersCollection, name), userData);
+            return userData;
         } else {
             console.error("Error registering user: User object is undefined");
             console.log("Failed to register user");
+            return null;
         }
     } catch (error) {
         console.error("Error registering user:", error.code, error.message);

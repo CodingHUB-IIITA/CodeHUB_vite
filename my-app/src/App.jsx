@@ -11,21 +11,21 @@ import BlogsList from "./pages/Blogs.jsx";
 import Sidebar from "./Components/Sidebar.jsx";
 import Blogs from "./pages/Blogs.jsx";
 
+import {useDispatch, useSelector } from "react-redux";
+
+
 const App = () => {
-  const {state, setState} = useUserData();
+  const user = useSelector(state => state.user);
+  console.log(user);
   return (
     <Router>
-      {/* <Layout> */}
-
       <Routes>    
         <Route path="/signup" element={<SignupForm />} />
         <Route path="/signin" element={<SigninForm />} />
         <Route path="/blogs" element={<Blogs/>} />
         <Route path="/dashboard" element={<Sidebar/>}/>
         <Route path="/userDashboard" element={<UserProfile/>} />
-        
       </Routes>
-      {/* </Layout> */}
     </Router>
   );
 };

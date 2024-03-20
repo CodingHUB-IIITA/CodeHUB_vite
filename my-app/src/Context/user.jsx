@@ -4,11 +4,11 @@ const UserContext = createContext();
 
 const UserDataProvider = ({ children }) => {
     const [state, setState] = useState({
-        name: "",
+        name: "invalid",
         email: "",
         handle: [],
         role: 0,
-    });
+    });  
     return (
         <UserContext.Provider value={{ state, setState }}>
             {children}

@@ -5,10 +5,13 @@ import { signin } from '../Api/auth.jsx';
 import "../styles/global.css"
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../Context/user.jsx';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../features/userSlice.jsx';
 
 export default function SigninForm() {
   const {state,setState}=useUserData();
   const navigate=useNavigate();
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -19,15 +22,22 @@ export default function SigninForm() {
         try{
           await signin(values).then((querySnapshot) =>{
             querySnapshot.forEach(element => {
-              const {name,role,email,handles,pic} = element.data();
-              setState((prevState) => ({...prevState, 
+              // console.log(element.data().uid);
+              const {name,role,email,handles,pic,uid} = element.data();
+              // console.log(uid);
+              const values = {
                 name: name,
                 role: role,
                 email: email,
                 handles: handles,
-                pic: pic 
-              }))
-              navigate('/');
+                pic : pic,
+                uid:uid
+              }
+             console.log(values);
+              dispatch(updateUser(values));
+
+              navigate("/dashboard");
+              
             });
           });
         }
@@ -36,13 +46,8 @@ export default function SigninForm() {
         }
     },
 
-  });
-//   useEffect(()=>{
-//     if(userData!=null){
-// navigate('/');
-//     }
+  }); 
 
-//   },[userData,navigate]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-reqLblue">

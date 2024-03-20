@@ -1,31 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { useFormik } from 'formik';
 import { registerUser } from '../Api/auth.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../Context/user.jsx';
+
+import { updateUser } from '../features/userSlice.jsx';
+
 import { getAuth } from 'firebase/auth';
+import { useDispatch} from 'react-redux';
 
 export default function SignupForm() {
 
-  const {state, setState} = useUserData();
+  const [uid,setUid] = useState("");
+
+  const dispatch = useDispatch();
+
   const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
       name: '',
-      picture: null,
+      pic: null,
+      role:0,
+      handles:[],
+      uid:""
     },
     onSubmit: async(values) => {
-      console.log(values);
       try{
-        registerUser(values);
-        setState((prevState) => ({
-          ...prevState,
-          name: values.name,
-          email: values.email,
-          picture: values.pic,
-        }))
+        registerUser(values).then((res)=>{
+          if(res) {
+            dispatch(updateUser(res));
+          }
+        }
+        );
         navigate('/dashboard');
       }
       catch{
