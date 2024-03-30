@@ -22,8 +22,7 @@ export default function SignupForm() {
       password: '',
       name: '',
       pic: null,
-      role:0,
-      handles:[],
+      cards:[],
       uid:""
     },
     onSubmit: async(values) => {

@@ -12,7 +12,7 @@ const usersCollection = collection(db, 'Users');
 const registerUser = async (values) => {
    const auth = getAuth();
     
-    const { name, email, password, pic, handles, role } = values;
+    const { name, email, password, pic, cards } = values;
     try {
         
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -22,13 +22,13 @@ const registerUser = async (values) => {
             localStorage.setItem('user', JSON.stringify(user));
             const token = await user.getIdToken();
             localStorage.setItem('token', token);
+            
             const userData = {
                 uid: user.uid,
                 name: name,
                 email: email,
                 pic: pic || 'dhttps://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
-                handles: handles || [],
-                role: role || 0
+                cards : cards || [],
             };
             
             await setDoc(doc(usersCollection, name), userData);
@@ -77,9 +77,6 @@ const signin = async (values) => {
           const auth = getAuth();
           await signOut(auth);
           console.log("User Signed Out..");
-          
-          // Navigate to the sign-in page
-        //   navigate('/signin');
         } catch (err) {
           console.error("Error signing off", err);
         }

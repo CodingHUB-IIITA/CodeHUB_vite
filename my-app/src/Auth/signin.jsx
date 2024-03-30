@@ -23,13 +23,12 @@ export default function SigninForm() {
           await signin(values).then((querySnapshot) =>{
             querySnapshot.forEach(element => {
               // console.log(element.data().uid);
-              const {name,role,email,handles,pic,uid} = element.data();
+              const {name,email,cards,pic,uid} = element.data();
               // console.log(uid);
               const values = {
                 name: name,
-                role: role,
                 email: email,
-                handles: handles,
+                cards: cards,
                 pic : pic,
                 uid:uid
               }
